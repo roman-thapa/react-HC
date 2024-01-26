@@ -2,18 +2,19 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom' 
+import {createBrowserRouter, RouterProvider} from "react-router-dom"
 import { Provider } from 'react-redux'
-import store from './store/store.js'
-import Home from './pages/Home.jsx'
-import Protected from './components/AuthLayout.jsx'
-import Login from './pages/Login.jsx'
-import Signup from './pages/Signup.jsx'
-import AllPosts from './pages/AllPosts.jsx'
-import AddPost from './pages/AddPost.jsx'
-import EditPost from './pages/EditPost.jsx'
-import post from './pages/Post.jsx'
-import Post from './pages/Post.jsx'
+import store from "./store/store.js"
+
+
+import Home from "./pages/Home.jsx"
+import Login from "./pages/Login.jsx"
+import Protected from "./components/AuthLayout.jsx"
+import Signup from "./pages/Signup.jsx"
+import AllPosts from "./pages/AllPosts.jsx"
+import AddPost from "./pages/AddPost.jsx"
+import EditPost from "./pages/EditPost.jsx"
+import Post from "./pages/Post.jsx"
 
 const router = createBrowserRouter([
   {
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: "/edit-posts/:slug",
+        path: "/edit-post/:slug",
         element: (
           <Protected authentication>
             <EditPost />
@@ -75,6 +76,7 @@ const router = createBrowserRouter([
     ]
   }
 ])
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

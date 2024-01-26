@@ -1,20 +1,22 @@
 import React, {useCallback} from "react";
-import {useForm} from 'react-hook-form'
-import Button from '../Button'
-import Input from '../Input'
-import RTE from '../RTE'
-import Select from '../Select'
-import appWriteService from '../../appwrite/config'
-import {useSelector} from 'react-redux'
-import {useNavigate} from 'react-router-dom' 
+import {useForm} from "react-hook-form"
+import Button from "../Button"
+import Input from "../Input"
+import RTE from "../RTE"
+import Select from "../Select"
+import appwriteSerice from "../../appwrite/config"
+import {useSelector } from "react-redux"
+import {useNavigate} from "react-router-dom"
 
-export default function PostForm({post}) {
+
+export default function PostForm({post}){
     const {register, handleSubmit, watch, setValue, control, getValues} = useForm({
         defaultValues: {
-            title: post?.title || "",
-            slug: post?.slug ||  "",
+            tittle: post?.title || "",
+            slug: post?.slug || "",
             content: post?.content || "",
             status: post?.status || "active"
+
         }
     })
 
@@ -23,34 +25,36 @@ export default function PostForm({post}) {
 
     const submit = async(data) => {
         if (post) {
-            const file = data.image[0] ? await appWriteService.uploadFile(data.image[0]) : null
-            
+            const file = data.image[0] ? await appwriteSerice.uploadFile(data.image[0]) : null
+
             if (file) {
-                appWriteService.deleteFile(post.featuredImage)
+                appwriteSerice.deleteFile(post.featuredImage)
             }
-            const dbPost = await appWriteService.updatePost(post.$id, {
+            const dbPost = await appwriteSerice.updatePost(post.$id, {
                 ...data,
-                featuredImage: file ? file.$id : undefined
+                featuredImage: file ? file.$id : undefined 
             })
             if (dbPost) {
                 navigate(`/post/${dbPost.$id}`)
-            } else {
-                const file = await appWriteService.updatePost(data.image[0])
-                if (file) {
-                    const fileId = file.$id
-                    data.featuredImage = fileId
-                    const dbPost = await appWriteService.createPost({data, userID: userData.$id})
-                }
+            }
+        } else {
+            const file = await appwriteSerice.uploadFile(data.image[0])
+            if (file) {
+                const fileId = file.$id
+                data.featuredImage = fileId
+                const dbPost = await appwriteSerice.createPost({...data, userId: userData.$id})
+
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`)
                 }
             }
         }
-        
+
     }
 
-    const slugTransform = useCallback(value => {
-        if (value && typeof value === "string") return value.trim().toLowerCase().replace(/[^a-zA-z\d\s]+/g, '-').replace(/\s/g, "-")
+    const slugTransform = useCallback((value) => {
+        if(value && typeof value === "string") return value.trim().toLowerCase().replace(/[^a-zA-Z\d\s]+/g, '-')
+        .replace(/\s/g, "-")
     }, [])
 
     React.useEffect(() => {
@@ -58,39 +62,38 @@ export default function PostForm({post}) {
             if (name === "title") {
                 setValue("slug", slugTransform(value.title), {shouldValidate: true})
             }
-        })
+        }) 
     }, [watch, slugTransform, setValue])
-
     return (
         <form onSubmit={handleSubmit(submit)}
-        className='flex flex-wrap'
+        className="flex flex-wrap"
         >
             <div className="w-2/3 px-2">
                 <Input
-                lable="Title"
+                label="Title"
                 placeholder="Title"
                 className="mb-4"
-                {...register("title", {required:true})}
+                {...register("title", {required: true})}
                 />
-                <Input 
-                lable="Slug :"
+                <Input
+                label="Slug :"
                 placeholder="Slug"
                 className="mb-4"
-                {...register("slug", { required:true})}
-                onInput={e=> {
-                    setValue('slug', slugTransform(e.currentTarget.value), {shouldValidate:true})
+                {...register("slug", {required: true})}
+                onInput={(e) => {
+                    setValue("slug", slugTransform(e.currentTarget.value), {shouldValidate: true})
                 }}
                 />
-                <RTE 
-                lable="Content: "
+                <RTE
+                label="Content: "
                 name="content"
                 control={control}
                 defaultValue={getValues("content")}
                 />
             </div>
             <div className="1/3 px-2">
-                <Input 
-                lable="Featured Image"
+                <Input
+                label="Featured Image"
                 type="file"
                 className="mb-4"
                 accept="image/png, image/jpg, image/jpeg"
@@ -98,24 +101,23 @@ export default function PostForm({post}) {
                 />
                 {post && (
                     <div className="w-full mb-4">
-                        <img src={appWriteService.getFilePreview(post.featuredImage)} alt={post.title} 
+                        <img src={appwriteSerice.getFilePreview(post.featuredImage)} alt={post.title}
                         className="rounded-lg"
                         />
+                        
                     </div>
                 )}
-                <Select 
-                options={["active","inactive"]}
-                lable="Status"
+                <Select
+                options={["active", "inactive"]}
+                label="Status"
                 className="mb-4"
-                {...register("status", {required:true})}
+                {...register("status", {required: true})}
                 />
                 <Button
                 type="submit"
-                bgColor={post ? "bg-green-500" : undefined}
+                bgColor={post ? "bg-green-500": undefined}
                 className="w-full"
-                >
-                    {post? "Update" : "Submit"}
-                </Button>
+                >{post ? "Update": "Submit"}</Button>
             </div>
         </form>
     )

@@ -1,23 +1,21 @@
-import { programSupportsExtensions } from "@solana/spl-token";
-import React, { forwardRef, useId } from "react";
+import React , {useId} from "react"
 
-const Select = forwardRef(function Select({
+function Select({
     options,
-    lable,
+    label,
     className,
-    ...programSupportsExtensions
-},ref){
+    ...props
+}, ref){
     const id = useId()
-
     return (
         <div className="w-full">
-            {lable && (
-                    <lable htmlFor={id}
+            {label && (
+                    <label htmlFor={id}
                     className='inline-block mb-1 pl-1'>
-                        {lable}
-                    </lable>
+                        {label}
+                    </label>
             )}
-            <select 
+            <select
             {...props}
             id={id}
             ref={ref}
@@ -26,16 +24,15 @@ const Select = forwardRef(function Select({
                 {
                     options.map((option) => (
                         <option
-                        key={option}
+                        key={option} 
                         value={option}
-                        >
-                            {option}
-                        </option>
+                        >{option}</option>
                     ))
                 }
             </select>
         </div>
     )
-})
+}
 
-export default Select
+
+export default React.forwardRef(Select)

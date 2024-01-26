@@ -22,7 +22,7 @@ function Login() {
                 const userData = await authService.getCurrentUser()
                 if (userData) dispatch(authLogin({userData}))
                 navigate("/")
-            } 
+            }
         } catch (error) {
             setError(error.message)
         }
@@ -72,7 +72,6 @@ function Login() {
             </div>
         </div>
     );
-
 }
 
 export default Login
